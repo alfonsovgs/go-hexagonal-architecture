@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	mooc "github.com/alfonsovgs/go-hexagonal-architecture/internal"
+	"github.com/alfonsovgs/go-hexagonal-architecture/internal/creating"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/handler/courses"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/handler/health"
 	"github.com/gin-gonic/gin"
@@ -15,13 +15,15 @@ type Server struct {
 	engine   *gin.Engine
 
 	// deps
-	courseRepository mooc.CourseRepository
+	creatingCourseService creating.CourseService
 }
 
-func New(host string, port uint, courseRepository mooc.CourseRepository) Server {
+func New(host string, port uint, creatingCourseService creating.CourseService) Server {
 	srv := Server{
 		engine:   gin.New(),
 		httpAddr: fmt.Sprintf("#{host}:#{port}"),
+
+		creatingCourseService: creatingCourseService,
 	}
 
 	srv.registerRoutes()
@@ -36,5 +38,5 @@ func (s *Server) Run() error {
 
 func (s *Server) registerRoutes() {
 	s.engine.GET("/health", health.CheckHandler())
-	s.engine.POST("/courses", courses.CreateHandler(s.courseRepository))
+	s.engine.POST("/courses", courses.CreateHandler(s.creatingCourseService))
 }

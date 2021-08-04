@@ -22,6 +22,7 @@ func NewCourseRepository(db *sql.DB) *CourseRepository {
 
 func (r *CourseRepository) Save(ctx context.Context, course mooc.Course) error {
 	courseSQLStruct := sqlbuilder.NewStruct(new(sqlCourse))
+
 	query, args := courseSQLStruct.InsertInto(sqlCourseTable, sqlCourse{
 		ID:       course.ID(),
 		Name:     course.Name(),
@@ -34,4 +35,8 @@ func (r *CourseRepository) Save(ctx context.Context, course mooc.Course) error {
 	}
 
 	return errors.New("")
+}
+
+func (r *CourseRepository) GetAll(ctx context.Context) []mooc.Course {
+	return make([]mooc.Course, 0)
 }

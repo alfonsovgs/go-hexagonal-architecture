@@ -3,6 +3,7 @@ module github.com/alfonsovgs/go-hexagonal-architecture
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/gin-gonic/gin v1.7.2 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/huandu/go-sqlbuilder v1.12.2 // indirect

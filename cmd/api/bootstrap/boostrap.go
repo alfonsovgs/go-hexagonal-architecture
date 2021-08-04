@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/alfonsovgs/go-hexagonal-architecture/internal/creating"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/storage/mysql"
 )
@@ -28,7 +29,8 @@ func Run() error {
 	}
 
 	courseRepository := mysql.NewCourseRepository(db)
+	courseService := creating.NewCourseService(courseRepository)
 
-	srv := server.New(host, port, courseRepository)
+	srv := server.New(host, port, courseService)
 	return srv.Run()
 }
