@@ -1,8 +1,10 @@
 package bootstrap
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/creating"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/bus/inmemory"
@@ -14,11 +16,12 @@ const (
 	host = "localhost"
 	port = 8080
 
-	dbUser = "codely"
-	dbPass = "codely"
-	dbHost = "localhost"
-	dbPort = "3306"
-	dbName = "codely"
+	dbUser          = "codely"
+	dbPass          = "codely"
+	dbHost          = "localhost"
+	dbPort          = "3306"
+	dbName          = "codely"
+	shutdownTimeout = time.Second * 10
 )
 
 func Run() error {
@@ -39,6 +42,6 @@ func Run() error {
 	createCourseCommandHandler := creating.NewCourseCommandHandler(courseService)
 	commandBus.Register(creating.CourseCommandType, createCourseCommandHandler)
 
-	srv := server.New(host, port, commandBus)
-	return srv.Run()
+	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus)
+	return srv.Run(ctx)
 }
