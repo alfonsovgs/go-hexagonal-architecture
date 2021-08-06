@@ -36,7 +36,7 @@ func Run() error {
 		commandBus = inmemory.NewCommandBus()
 	)
 
-	courseRepository := mysql.NewCourseRepository(db)
+	courseRepository := mysql.NewCourseRepository(db, shutdownTimeout)
 	courseService := creating.NewCourseService(courseRepository)
 
 	createCourseCommandHandler := creating.NewCourseCommandHandler(courseService)
