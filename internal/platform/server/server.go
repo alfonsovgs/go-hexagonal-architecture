@@ -11,6 +11,8 @@ import (
 
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/handler/courses"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/handler/health"
+	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/middleware/logging"
+	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server/middleware/recovery"
 	"github.com/alfonsovgs/go-hexagonal-architecture/kit/command"
 	"github.com/gin-gonic/gin"
 )
@@ -77,6 +79,8 @@ func serverContext(ctx context.Context) context.Context {
 }
 
 func (s *Server) registerRoutes() {
+	s.engine.Use(recovery.Middleware(), logging.Middleware())
+
 	s.engine.GET("/health", health.CheckHandler())
 	s.engine.POST("/courses", courses.CreateHandler(s.commandBus))
 }
