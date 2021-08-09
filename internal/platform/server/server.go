@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +28,7 @@ type Server struct {
 func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, commandBus command.Bus) (context.Context, Server) {
 	srv := Server{
 		engine:   gin.New(),
-		httpAddr: fmt.Sprintf("#{host}:#{port}"),
+		httpAddr: "#{host}:#{port}",
 
 		shutdownTimeout: shutdownTimeout,
 

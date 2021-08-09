@@ -34,10 +34,11 @@ func Run() error {
 
 	var (
 		commandBus = inmemory.NewCommandBus()
+		eventBus   = inmemory.NewEventBus()
 	)
 
 	courseRepository := mysql.NewCourseRepository(db, shutdownTimeout)
-	courseService := creating.NewCourseService(courseRepository)
+	courseService := creating.NewCourseService(courseRepository, eventBus)
 
 	createCourseCommandHandler := creating.NewCourseCommandHandler(courseService)
 	commandBus.Register(creating.CourseCommandType, createCourseCommandHandler)

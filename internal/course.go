@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/alfonsovgs/go-hexagonal-architecture/kit/event"
 	"github.com/google/uuid"
 )
 
@@ -21,6 +22,7 @@ type Course struct {
 	id       CourseID
 	name     CourseName
 	duration CourseDuration
+	events   []event.Event
 }
 
 // NewCourse creates a new course
@@ -61,6 +63,19 @@ func (c Course) Name() string {
 // Duration returns the course duration.
 func (c Course) Duration() string {
 	return c.duration.String()
+}
+
+// Record records a new domain event.
+func (c *Course) Record(evt event.Event) {
+	c.events = append(c.events, evt)
+}
+
+// PullEvents returns all the recorded domain events.
+func (c Course) PullEvents() []event.Event {
+	evt := c.events
+	c.events = []event.Event{}
+
+	return evt
 }
 
 var ErrInvalidCourseId = errors.New("invalid Course ID")

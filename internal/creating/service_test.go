@@ -7,6 +7,7 @@ import (
 
 	mooc "github.com/alfonsovgs/go-hexagonal-architecture/internal"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/storage/storagemocks"
+	"github.com/alfonsovgs/go-hexagonal-architecture/kit/event/eventmocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -23,7 +24,9 @@ func Test_CourseService_CreateCourse_RepositoryError(t *testing.T) {
 	courseRepositoryMock := new(storagemocks.CourseRepository)
 	courseRepositoryMock.On("Save", mock.Anything, course).Return(errors.New("something happend"))
 
-	courseService := NewCourseService(courseRepositoryMock)
+	eventBusMock := new(eventmocks.Bus)
+
+	courseService := NewCourseService(courseRepositoryMock, eventBusMock)
 
 	err = courseService.CreateCourse(context.Background(), courseID, courseName, courseDuration)
 	courseRepositoryMock.AssertExpectations(t)
@@ -41,7 +44,9 @@ func Test_CourseService_CreateCourse_Succeed(t *testing.T) {
 	courseRepositoryMock := new(storagemocks.CourseRepository)
 	courseRepositoryMock.On("Save", mock.Anything, course).Return(nil)
 
-	courseService := NewCourseService(courseRepositoryMock)
+	eventBusMock := new(eventmocks.Bus)
+
+	courseService := NewCourseService(courseRepositoryMock, eventBusMock)
 
 	err = courseService.CreateCourse(context.Background(), courseID, courseName, courseDuration)
 
