@@ -19,3 +19,7 @@ func (b *EventBus) Publish(_ context.Context, events []event.Event) error {
 	b.events = append(b.events, events...)
 	return nil
 }
+
+func (b *EventBus) Subscribe(t event.Type, h event.Handler) error {
+	return nil
+}

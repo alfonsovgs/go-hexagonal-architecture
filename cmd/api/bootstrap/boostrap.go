@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	mooc "github.com/alfonsovgs/go-hexagonal-architecture/internal"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/creating"
+	"github.com/alfonsovgs/go-hexagonal-architecture/internal/increasing"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/bus/inmemory"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/server"
 	"github.com/alfonsovgs/go-hexagonal-architecture/internal/platform/storage/mysql"
@@ -39,9 +41,15 @@ func Run() error {
 
 	courseRepository := mysql.NewCourseRepository(db, shutdownTimeout)
 	courseService := creating.NewCourseService(courseRepository, eventBus)
+	increasingCourseService := increasing.NewCourseCounterService()
 
 	createCourseCommandHandler := creating.NewCourseCommandHandler(courseService)
 	commandBus.Register(creating.CourseCommandType, createCourseCommandHandler)
+
+	eventBus.Subscribe(
+		mooc.CourseCreatedEventType,
+		creating.NewIncreaseCoursesCounterOnCourseCreated(increasingCourseService),
+	)
 
 	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus)
 	return srv.Run(ctx)
