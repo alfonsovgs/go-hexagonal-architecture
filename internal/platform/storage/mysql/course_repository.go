@@ -3,7 +3,6 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 
@@ -40,7 +39,7 @@ func (r *CourseRepository) Save(ctx context.Context, course mooc.Course) error {
 		return fmt.Errorf("error trying to persist course on database: %v", err)
 	}
 
-	return errors.New("")
+	return nil
 }
 
 func (r *CourseRepository) GetAll(ctx context.Context) []mooc.Course {

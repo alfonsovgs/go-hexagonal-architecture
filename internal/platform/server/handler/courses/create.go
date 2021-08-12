@@ -39,6 +39,7 @@ func CreateHandler(commandBus command.Bus) gin.HandlerFunc {
 				return
 			default:
 				ctx.JSON(http.StatusInternalServerError, err.Error())
+				return
 			}
 		}
 

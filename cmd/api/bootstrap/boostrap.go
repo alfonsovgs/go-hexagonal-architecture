@@ -16,26 +16,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-const (
-	host = "localhost"
-	port = 8080
-
-	dbUser          = "codely"
-	dbPass          = "codely"
-	dbHost          = "localhost"
-	dbPort          = "3306"
-	dbName          = "codely"
-	shutdownTimeout = time.Second * 10
-)
-
 func Run() error {
 	var cfg config
 	err := envconfig.Process("MOOC", &cfg)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Data:", cfg)
 
 	mysqlURI := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", cfg.DbUser, cfg.DbPass, cfg.DbHost, cfg.DbPort, cfg.DbName)
 	db, err := sql.Open("mysql", mysqlURI)
@@ -49,7 +35,7 @@ func Run() error {
 		eventBus   = inmemory.NewEventBus()
 	)
 
-	courseRepository := mysql.NewCourseRepository(db, shutdownTimeout)
+	courseRepository := mysql.NewCourseRepository(db, cfg.ShutdownTimeout)
 	courseService := creating.NewCourseService(courseRepository, eventBus)
 	increasingCourseService := increasing.NewCourseCounterService()
 
@@ -61,7 +47,7 @@ func Run() error {
 		creating.NewIncreaseCoursesCounterOnCourseCreated(increasingCourseService),
 	)
 
-	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus)
+	ctx, srv := server.New(context.Background(), cfg.Host, cfg.Port, cfg.ShutdownTimeout, commandBus)
 	return srv.Run(ctx)
 }
 
